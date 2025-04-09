@@ -1,0 +1,441 @@
+﻿@{
+    Layout = null;
+}
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core
+
+@{
+    var contactHeaderImage = Model.HasValue("contactHeaderImage") ? Model.Value<IPublishedContent>("contactHeaderImage") : null;
+    var contactHeaderImageUrl = contactHeaderImage != null ? contactHeaderImage.Url() : "/images/contact-header.jpg";
+    var address = Model.HasValue("address") ? Model.Value<string>("address") : "Adres bilgisi girilmemiş.";
+    var phone = Model.HasValue("phone") ? Model.Value<string>("phone") : "Telefon bilgisi girilmemiş.";
+    var email = Model.HasValue("email") ? Model.Value<string>("email") : "E-posta bilgisi girilmemiş.";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahretto - İletişim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="/css/site.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #212529;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .navbar-dark {
+            background-color: #212529;
+        }
+        .navbar-dark .nav-link {
+            color: #FFFFFF;
+        }
+        .navbar-dark .nav-link:hover, .navbar-dark .nav-link.active {
+            color: #8B4513;
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .hero-section {
+            position: relative;
+            height: 50vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #FFFFFF;
+        }
+        .hero-section .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 40px;
+            display: inline-block;
+            border-radius: 10px;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        .description-wrapper {
+            max-width: 600px;
+            text-align: center;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+        section h2 {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background-color: #8B4513;
+        }
+        .form-control {
+            background-color: #F8F9FA;
+            border: 1px solid #8B4513;
+            color: #212529;
+            font-size: 1.1rem;
+            padding: 10px;
+        }
+        .form-control:focus {
+            border-color: #8B4513;
+            box-shadow: 0 0 5px rgba(139, 69, 19, 0.5);
+        }
+        .form-label {
+            font-size: 1.1rem;
+            color: #FFFFFF;
+        }
+        .btn-primary {
+            background-color: #8B4513;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+        .btn-primary:hover {
+            background-color: #A0522D;
+        }
+        .contact-info {
+            background-color: #343A40;
+            padding: 30px;
+            border-radius: 10px;
+            color: #212529;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .contact-info p {
+            color: #FFFFFF;
+        }
+        .contact-info h3 {
+            color: #8B4513;
+            font-size: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .contact-info h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background-color: #8B4513;
+        }
+        .language-switcher {
+            position: relative;
+        }
+        .language-switcher a {
+            color: #8B4513;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        .language-switcher a:hover {
+            color: #A0522D;
+        }
+        .language-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #333333;
+            border: 1px solid #8b5a2b;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            min-width: 150px;
+            z-index: 1001;
+            overflow: hidden;
+        }
+        .language-menu a {
+            display: block;
+            padding: 8px 12px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .language-menu a:hover {
+            background-color: #6f4e37;
+        }
+        .modal-content {
+            background-color: #343A40;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        .modal-header {
+            border-bottom: 1px solid #8B4513;
+            background-color: #343A40;
+        }
+        .modal-footer {
+            border-top: 1px solid #8B4513;
+            background-color: #343A40;
+        }
+        .modal-title {
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+        .modal-body {
+            color: #CCCCCC;
+            font-size: 1.1rem;
+        }
+        .btn-close {
+            filter: invert(1);
+        }
+        .btn-primary {
+            background-color: #8B4513;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #A0522D;
+        }
+        .footer {
+            background-color: #212529;
+            padding: 20px 0;
+            text-align: center;
+            color: #FFFFFF;
+            border-top: 1px solid #8B4513;
+        }
+        .footer a {
+            color: #8B4513;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        .footer a:hover {
+            color: #A0522D;
+        }
+        .footer i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <span class="notranslate protect-kahretto">Kahretto</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#bilgi1">KURUMSAL</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#products">MENÜ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog">BLOG</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sss">SSS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/iletisim">İLETİŞİM</a>
+                    </li>
+                </ul>
+                <div class="language-switcher ms-auto">
+                    <a href="javascript:void(0)" id="languageToggle">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <div id="languageMenu" class="language-menu" style="display: none;">
+                        <a href="#" data-lang="tr">Türkçe</a>
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="de">Deutsch</a>
+                        <a href="#" data-lang="fr">Français</a>
+                        <a href="#" data-lang="es">Español</a>
+                    </div>
+                    <div id="google_translate_element" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script type="text/javascript">
+        // Çeviri için Google Translate API'sini başlat
+        document.cookie = "googtrans=/tr/tr; path=/";
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'tr',
+                includedLanguages: 'en,de,fr,es',
+                autoDisplay: false,
+                multilanguagePage: true
+            }, 'google_translate_element');
+
+            // "Kahretto" yazısının çevrilmesini engelle
+            const protectKahretto = () => {
+                const kahrettoElements = document.querySelectorAll('.protect-kahretto');
+                kahrettoElements.forEach(element => {
+                    if (element.innerText !== 'Kahretto') {
+                        element.innerText = 'Kahretto';
+                    }
+                });
+            };
+            document.addEventListener('DOMSubtreeModified', protectKahretto);
+        }
+
+        // Tüm JavaScript kodlarını birleştirip çakışmayı önleyelim
+        document.addEventListener('DOMContentLoaded', function () {
+            // Çeviri menüsü için olay dinleyicileri
+            const languageToggle = document.getElementById('languageToggle');
+            const languageMenu = document.getElementById('languageMenu');
+            const languageLinks = languageMenu.querySelectorAll('a');
+
+            if (languageToggle && languageMenu) {
+                languageToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    languageMenu.style.display = languageMenu.style.display === 'block' ? 'none' : 'block';
+                });
+
+                languageLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const lang = this.getAttribute('data-lang');
+                        const translateSelect = document.querySelector('#google_translate_element select.goog-te-combo');
+                        if (translateSelect) {
+                            translateSelect.value = lang;
+                            translateSelect.dispatchEvent(new Event('change'));
+                        }
+                        languageMenu.style.display = 'none';
+                    });
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!languageToggle.contains(e.target) && !languageMenu.contains(e.target)) {
+                        languageMenu.style.display = 'none';
+                    }
+                });
+            }
+
+            // Form gönderildiğinde modal aç
+            const form = document.getElementById('contactForm');
+            const successModalElement = document.getElementById('successModal');
+
+            if (form && successModalElement) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    try {
+                        const successModal = new bootstrap.Modal(successModalElement);
+                        successModal.show();
+                        form.reset(); // Formu sıfırla
+                    } catch (error) {
+                        console.error('Modal açılırken bir hata oluştu:', error);
+                    }
+                });
+            } else {
+                console.error('Form veya modal elementi bulunamadı.');
+            }
+        });
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <div class="hero-section" style="background-image: url('@contactHeaderImageUrl');">
+        <div class="overlay">
+            <h1>@(Model.HasValue("contactTitle") ? Model.Value<string>("contactTitle") : "İletişim")</h1>
+            <div class="description-wrapper">
+                <p>@(Model.HasValue("contactDescription") ? Model.Value<string>("contactDescription") : "Kahretto ile iletişime geçin! Sorularınızı, önerilerinizi veya taleplerinizi bizimle paylaşabilirsiniz.")</p>
+            </div>
+            <a href="#contact" class="btn btn-primary mt-3 scroll-link">Bize Ulaşın</a>
+        </div>
+    </div>
+
+    <section id="contact" class="container my-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="mb-4">Bize Yazın</h2>
+                <form id="contactForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Adınız Soyadınız</label>
+                        <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-posta Adresiniz</label>
+                        <input type="email" class="form-control" id="email" placeholder="ornek@ornek.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Mesajınız</label>
+                        <textarea class="form-control" id="message" rows="5" placeholder="Mesajınızı buraya yazın..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gönder</button>
+                </form>
+                <div class="contact-info mt-5">
+                    <h3>İletişim Bilgilerimiz</h3>
+                    <p><strong>Adres:</strong> @address</p>
+                    <p><strong>Telefon:</strong> @phone</p>
+                    <p><strong>E-posta:</strong> @email</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Mesajınız Gönderildi!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Mesajınızı aldık, en kısa sürede sizinle iletişime geçeceğiz. Teşekkür ederiz!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Kahretto. Tüm hakları saklıdır.</p>
+            <p>
+                <a href="/#bilgi1">Hakkımızda</a> | 
+                <a href="/iletisim">İletişim</a> | 
+                <a href="/sss">Sıkça Sorulan Sorular</a>
+            </p>
+            <p>
+                Bizi takip edin: 
+                <a href="https://www.instagram.com/kahretto" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.twitter.com/kahretto" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.facebook.com/kahretto" target="_blank"><i class="fab fa-facebook"></i></a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        document.querySelectorAll('.scroll-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('İletişim bölümü şu anda görüntülenemiyor. Lütfen sayfayı yenileyin.');
+                    console.error('Hedef bulunamadı: ' + this.getAttribute('href'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

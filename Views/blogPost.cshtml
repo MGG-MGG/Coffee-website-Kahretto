@@ -1,0 +1,218 @@
+﻿@{
+    Layout = null;
+}
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahretto - @Model.Value("postTitle")</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="/css/site.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #212529;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .navbar-dark {
+            background-color: #212529;
+        }
+        .navbar-dark .nav-link {
+            color: #FFFFFF;
+        }
+        .navbar-dark .nav-link:hover, .navbar-dark .nav-link.active {
+            color: #8B4513;
+        }
+        .blog-content {
+            background-color: #F8F9FA;
+            padding: 20px;
+            border-radius: 10px;
+            color: #212529;
+        }
+        .btn-primary {
+            background-color: #8B4513;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+        .btn-primary:hover {
+            background-color: #A0522D;
+        }
+        .language-switcher {
+            margin-left: 20px;
+        }
+        .language-switcher a {
+            color: #8B4513;
+            font-size: 1.5rem;
+        }
+        .language-menu {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            min-width: 150px;
+        }
+        .language-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .language-menu a:hover {
+            background-color: #e0e0e0;
+        }
+        .footer {
+            background-color: #212529;
+            padding: 20px 0;
+            text-align: center;
+            color: #FFFFFF;
+            border-top: 1px solid #8B4513;
+        }
+        .footer a {
+            color: #8B4513;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        .footer a:hover {
+            color: #A0522D;
+        }
+        .footer i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <span class="notranslate protect-kahretto">Kahretto</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ANASAYFA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#bilgi1">KURUMSAL</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#products">MENÜ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/blog">BLOG</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sss">SSS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/iletisim">İLETİŞİM</a>
+                    </li>
+                </ul>
+                <div class="language-switcher">
+                    <a href="javascript:void(0)" id="languageToggle">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <div id="languageMenu" class="language-menu" style="display: none;">
+                        <a href="#" data-lang="tr">Türkçe</a>
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="de">Deutsch</a>
+                        <a href="#" data-lang="fr">Français</a>
+                        <a href="#" data-lang="es">Español</a>
+                    </div>
+                    <div id="google_translate_element" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script type="text/javascript">
+        document.cookie = "googtrans=/tr/tr; path=/";
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'tr',
+                includedLanguages: 'en,de,fr,es',
+                autoDisplay: false,
+                multilanguagePage: true
+            }, 'google_translate_element');
+            const protectKahretto = () => {
+                const kahrettoElements = document.querySelectorAll('.protect-kahretto');
+                kahrettoElements.forEach(element => {
+                    if (element.innerText !== 'Kahretto') {
+                        element.innerText = 'Kahretto';
+                    }
+                });
+            };
+            document.addEventListener('DOMSubtreeModified', protectKahretto);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const languageToggle = document.getElementById('languageToggle');
+            const languageMenu = document.getElementById('languageMenu');
+            const languageLinks = languageMenu.querySelectorAll('a');
+            languageToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                languageMenu.style.display = languageMenu.style.display === 'block' ? 'none' : 'block';
+            });
+            languageLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    const translateSelect = document.querySelector('#google_translate_element select.goog-te-combo');
+                    if (translateSelect) {
+                        translateSelect.value = lang;
+                        translateSelect.dispatchEvent(new Event('change'));
+                    }
+                    languageMenu.style.display = 'none';
+                });
+            });
+            document.addEventListener('click', function (e) {
+                if (!languageToggle.contains(e.target) && !languageMenu.contains(e.target)) {
+                    languageMenu.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <section id="blog-post" class="container my-5">
+        <h1 class="mb-4">@(Model.HasValue("postTitle") ? Model.Value<string>("postTitle") : "Başlık Yok")</h1>
+        <p class="text-muted mb-4">@(Model.HasValue("postDate") ? Model.Value<DateTime>("postDate").ToString("dd MMMM yyyy") : "Tarih Yok")</p>
+        <img src="@(Model.HasValue("postImage") ? Model.Value<IPublishedContent>("postImage")?.Url() : "/images/placeholder.jpg")" class="img-fluid rounded mb-4" alt="@Model.Value("postTitle")">
+        <div class="blog-content">
+            @(Model.HasValue("postContent") ? Model.Value<string>("postContent") : "İçerik Yok")
+        </div>
+        <a href="/blog" class="btn btn-primary mt-4">Blog’a Geri Dön</a>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Kahretto. Tüm hakları saklıdır.</p>
+            <p>
+                <a href="/#bilgi1">Hakkımızda</a> | 
+                <a href="/iletisim">İletişim</a> | 
+                <a href="/sss">Sıkça Sorulan Sorular</a>
+            </p>
+            <p>
+                Bizi takip edin: 
+                <a href="https://www.instagram.com/kahretto" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.twitter.com/kahretto" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.facebook.com/kahretto" target="_blank"><i class="fab fa-facebook"></i></a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

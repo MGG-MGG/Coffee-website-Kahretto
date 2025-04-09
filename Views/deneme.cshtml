@@ -1,0 +1,394 @@
+﻿@{
+    Layout = null;
+}
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core
+@{
+    var welcomeText = Model.HasValue("welcomeText") ? Model.Value<string>("welcomeText") : "Kahretto’ya Hoş Geldiniz! (Varsayılan)";
+    var headerImage = Model.HasValue("headerimage") ? Model.Value<IPublishedContent>("headerimage") : null;
+    var headerImageUrl = headerImage != null ? headerImage.Url() : "/images/default.jpg";
+    var bilgiYazisi1 = Model.HasValue("bilgiYazisi1") ? Model.Value<string>("bilgiYazisi1") : "Kahretto olarak 2010’dan beri en kaliteli kahveleri sunuyoruz. (Varsayılan)";
+    var bilgiYazisi2 = Model.HasValue("bilgiYazisi2") ? Model.Value<string>("bilgiYazisi2") : "Kahve tutkunları için buradayız! (Varsayılan)";
+    var bilgiResmi1 = Model.HasValue("bilgiResmi1") ? Model.Value<IPublishedContent>("bilgiResmi1") : null;
+    var bilgiResmi1Url = bilgiResmi1 != null ? bilgiResmi1.Url() : "/images/placeholder.jpg";
+    var bilgiResmi2 = Model.HasValue("bilgiResmi2") ? Model.Value<IPublishedContent>("bilgiResmi2") : null;
+    var bilgiResmi2Url = bilgiResmi2 != null ? bilgiResmi2.Url() : "/images/placeholder.jpg";
+    var rootNodes = Umbraco.ContentAtRoot();
+    var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "homePage");
+    var productsPage = homePage != null ? homePage.Children().FirstOrDefault(x => x.ContentType.Alias == "urunkategorisi") : null;
+    var products = productsPage != null ? productsPage.Children().Where(x => x.ContentType.Alias == "urun") : Enumerable.Empty<IPublishedContent>();
+}
+
+@functions {
+    public static string RemoveHtmlTags(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+        return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", String.Empty);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahretto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <span class="notranslate protect-kahretto">Kahretto</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#bilgi1">KURUMSAL</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#products">MENÜ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog">BLOG</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sss">SSS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/iletisim">İLETİŞİM</a>
+                    </li>
+                </ul>
+                <!-- Çeviri İkonu -->
+                <div class="language-switcher ms-auto">
+                    <a href="javascript:void(0)" id="languageToggle">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <div id="languageMenu" class="language-menu" style="display: none;">
+                        <a href="#" data-lang="tr">Türkçe</a>
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="de">Deutsch</a>
+                        <a href="#" data-lang="fr">Français</a>
+                        <a href="#" data-lang="es">Español</a>
+                    </div>
+                    <div id="google_translate_element" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Google Çeviri Script’i ve Dil Değiştirme Mantığı -->
+    <script type="text/javascript">
+        document.cookie = "googtrans=/tr/tr; path=/";
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'tr',
+                includedLanguages: 'en,de,fr,es',
+                autoDisplay: false,
+                multilanguagePage: true
+            }, 'google_translate_element');
+
+            // Kahretto’yu çeviriden koruma
+            const protectKahretto = () => {
+                const kahrettoElements = document.querySelectorAll('.protect-kahretto');
+                kahrettoElements.forEach(element => {
+                    if (element.innerText !== 'Kahretto') {
+                        element.innerText = 'Kahretto';
+                    }
+                });
+            };
+            document.addEventListener('DOMSubtreeModified', protectKahretto);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const languageToggle = document.getElementById('languageToggle');
+            const languageMenu = document.getElementById('languageMenu');
+            const languageLinks = languageMenu.querySelectorAll('a');
+
+            languageToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                languageMenu.style.display = languageMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            languageLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    const translateSelect = document.querySelector('#google_translate_element select.goog-te-combo');
+                    if (translateSelect) {
+                        translateSelect.value = lang;
+                        translateSelect.dispatchEvent(new Event('change'));
+                    }
+                    languageMenu.style.display = 'none';
+                });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!languageToggle.contains(e.target) && !languageMenu.contains(e.target)) {
+                    languageMenu.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Açılış Ekranı -->
+    <div class="hero-section" style="background-image: url('@headerImageUrl');">
+        <div class="overlay">
+            @if (string.IsNullOrEmpty(welcomeText))
+            {
+                <p style="color: red;">Uyarı: WelcomeText alanı Umbraco'da tanımlı değil veya boş!</p>
+            }
+            <h1>
+                <span class="notranslate" lang="tr">Kahretto</span>
+                <span class="translate">'ya Hoş Geldiniz!</span>
+            </h1>
+            <a href="#products" class="btn btn-primary scroll-link">Ürünleri Gör</a>
+        </div>
+    </div>
+
+    <!-- Birinci Bilgi Bölümü (Solda Resim, Sağda Yazı) -->
+    <section id="bilgi1" class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-1 order-2">
+                <img src="@bilgiResmi1Url" class="img-fluid rounded enlarged-image" alt="Kahretto'nun tarihçesi hakkında bir resim">
+            </div>
+            <div class="col-md-6 order-md-2 order-1">
+                <h2 class="enlarged-text">Biz <span class="notranslate">Kimiz?</h2>
+                @if (string.IsNullOrEmpty(bilgiYazisi1))
+                {
+                    <p style="color: red;">Uyarı: BilgiYazisi1 alanı Umbraco'da tanımlı değil veya boş!</p>
+                }
+                <div class="enlarged-text">@Html.Raw(bilgiYazisi1.Replace("Kahretto", "<span class='notranslate'>Kahretto</span>"))</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- İkinci Bilgi Bölümü (Solda Yazı, Sağda Resim) -->
+    <section id="bilgi2" class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-1 order-2">
+                <h2 class="enlarged-text">Neden Biz?</h2>
+                @if (string.IsNullOrEmpty(bilgiYazisi2))
+                {
+                    <p style="color: red;">Uyarı: BilgiYazisi2 alanı Umbraco'da tanımlı değil veya boş!</p>
+                }
+                <div class="enlarged-text">@Html.Raw(bilgiYazisi2.Replace("Kahretto", "<span class='notranslate'>Kahretto</span>"))</div>
+            </div>
+            <div class="col-md-6 order-md-2 order-1">
+                <img src="@bilgiResmi2Url" class="img-fluid rounded enlarged-image" alt="Kahretto'nun farkını gösteren bir resim">
+            </div>
+        </div>
+    </section>
+
+    <!-- Ürünler Bölümü (5 Ürün Sığacak Şekilde) -->
+    <section id="products" class="container my-5">
+        <h2 class="text-center mb-4">Ürünlerimiz</h2>
+        <div class="row">
+            @if (products.Any())
+            {
+                foreach (var product in products)
+                {
+                    var productName = product.HasValue("urunAdi") ? product.Value<string>("urunAdi") : "Ürün Adı Yok";
+                    var productImage = product.HasValue("urunResmi") ? product.Value<IPublishedContent>("urunResmi") : null;
+                    var productImageUrl = productImage != null ? productImage.Url() : "/images/placeholder.jpg";
+                    var description = product.HasValue("aciklama") ? RemoveHtmlTags(product.Value<string>("aciklama")) : "Açıklama yok.";
+                    var price = product.HasValue("fiyat") ? product.Value<decimal>("fiyat").ToString("F2") : "Fiyat Yok";
+                    <div class="col-md-2 mb-4">
+                        <div class="card">
+                            <img src="@productImageUrl" class="card-img-top" alt="@productName">
+                            <div class="card-body">
+                                <h5 class="card-title">@productName</h5>
+                                <p class="card-text">Fiyat: @price TL<br>@description</p>
+                                <button class="btn btn-primary order-btn" data-product="@productName">Sipariş Ver</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-warning">Henüz ürün eklenmemiş. Lütfen daha sonra tekrar kontrol edin!</p>
+            }
+        </div>
+    </section>
+
+    <!-- Sipariş Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderForm">
+                        <div class="mb-3">
+                            <label class="form-label">Kahvenizi Özelleştirin:</label><br>
+                            <div id="ekstraSeceneklerContainer"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" id="submitOrder">Sipariş Ver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Şık Sipariş Başarılı Pop-up -->
+    <div id="orderSuccess" class="order-success">
+        <h3>Tebrikler!</h3>
+        <p>Siparişiniz alındı. Kahveniz hazırlanıyor! ☕</p>
+        <button class="close-btn" onclick="document.getElementById('orderSuccess').classList.remove('show')">Tamam</button>
+    </div>
+
+    <!-- Footer Bölümü -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Kahretto. Tüm hakları saklıdır.</p>
+            <p>
+                <a href="/#bilgi1">Hakkımızda</a> | 
+                <a href="/iletisim">İletişim</a> | 
+                <a href="/sss">Sıkça Sorulan Sorular</a>
+            </p>
+            <p>
+                Bizi takip edin: 
+                <a href="https://www.instagram.com/kahretto" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.twitter.com/kahretto" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.facebook.com/kahretto" target="_blank"><i class="fab fa-facebook"></i></a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Script Yüklemeleri -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        // Ürünleri Gör butonuna smooth scroll ekle
+        document.querySelectorAll('.scroll-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Ürünler bölümü şu anda görüntülenemiyor. Lütfen sayfayı yenileyin.');
+                    console.error('Hedef bulunamadı: ' + this.getAttribute('href'));
+                }
+            });
+        });
+
+        // Ürünlerin ekstra seçeneklerini saklamak için bir obje oluştur
+        try {
+            const urunBilgileri = {
+                @foreach (var product in products)
+                {
+                    var productName = product.HasValue("urunAdi") ? product.Value<string>("urunAdi") : "Ürün Adı Yok";
+                    var urunEkstraSecenekler = product.HasValue("urunEkstraSecenekler") ? product.Value<IEnumerable<string>>("urunEkstraSecenekler") : new List<string>();
+                    <text>"@productName": {
+                        "ekstraSecenekler": @Json.Serialize(urunEkstraSecenekler)
+                    },</text>
+                }
+            };
+            console.log('Tüm Ürün Bilgileri:', urunBilgileri);
+
+            // Sipariş butonuna tıklama
+            document.querySelectorAll('.order-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productName = this.getAttribute('data-product');
+                    if (!productName) {
+                        console.error('Hata: Ürün adı (data-product) tanımlı değil.');
+                        return;
+                    }
+
+                    console.log('Tıklanan Ürün:', productName);
+                    document.getElementById('modalTitle').innerHTML = productName.replace('Kahretto', '<span class="notranslate">Kahretto</span>') + ' Siparişi';
+
+                    if (!urunBilgileri[productName]) {
+                        alert(`Hata: ${productName} ürünü için bilgi bulunamadı. Lütfen tekrar deneyin.`);
+                        console.error(`Ürün bilgisi bulunamadı: ${productName}`);
+                        return;
+                    }
+
+                    console.log('Seçilen Ürün Ekstra Seçenekler:', urunBilgileri[productName].ekstraSecenekler);
+
+                    const container = document.getElementById('ekstraSeceneklerContainer');
+                    if (!container) {
+                        console.error('Hata: Ekstra seçenekler container’ı bulunamadı.');
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    const secenekler = urunBilgileri[productName].ekstraSecenekler || [];
+                    if (secenekler.length > 0 && secenekler.every(secenek => secenek !== '')) {
+                        secenekler.forEach((secenek, index) => {
+                            const secenekId = `secenek-${index}-${productName.replace(/\s/g, '').toLowerCase()}`;
+                            const input = document.createElement('input');
+                            input.type = 'checkbox';
+                            input.name = 'option';
+                            input.value = secenek;
+                            input.id = secenekId;
+                            input.className = 'form-check-input';
+                            const label = document.createElement('label');
+                            label.htmlFor = secenekId;
+                            label.className = 'form-check-label';
+                            label.innerText = secenek;
+                            const div = document.createElement('div');
+                            div.className = 'form-check';
+                            div.appendChild(input);
+                            div.appendChild(label);
+                            container.appendChild(div);
+                        });
+                    } else {
+                        container.innerHTML = '<p style="color: red;">Hata: Bu ürün için ekstra seçenek tanımlı değil veya boş. Lütfen Umbraco\'da kontrol edin.</p>';
+                    }
+
+                    const orderModal = document.getElementById('orderModal');
+                    if (!orderModal) {
+                        console.error('Hata: Sipariş modalı bulunamadı.');
+                        return;
+                    }
+
+                    try {
+                        new bootstrap.Modal(orderModal).show();
+                    } catch (error) {
+                        console.error('Modal açılırken bir hata oluştu:', error);
+                        alert('Sipariş ekranı açılırken bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+
+            // Sipariş verme ve pop-up
+            const submitOrderBtn = document.getElementById('submitOrder');
+            if (submitOrderBtn) {
+                submitOrderBtn.addEventListener('click', function() {
+                    const options = Array.from(document.querySelectorAll('input[name="option"]:checked'))
+                        .map(opt => opt.value).join(', ') || 'Hiçbir ekstra seçilmedi';
+                    const successMessage = document.getElementById('orderSuccess');
+                    if (successMessage) {
+                        successMessage.querySelector('p').innerText = `Siparişiniz alındı! Seçenekler: ${options} ☕`;
+                        successMessage.classList.add('show');
+                        bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+                        setTimeout(() => successMessage.classList.remove('show'), 3000);
+                    } else {
+                        console.error('Hata: Sipariş başarılı mesajı container’ı bulunamadı.');
+                    }
+                });
+            } else {
+                console.error('Hata: Sipariş gönder butonu bulunamadı.');
+            }
+        } catch (error) {
+            console.error('Ürün bilgileri oluşturulurken bir hata oluştu:', error);
+        }
+    </script>
+</body>
+</html>

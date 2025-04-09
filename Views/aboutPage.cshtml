@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core
+@{
+    var content = Model.HasValue("content") ? Model.Value<string>("content") : "Kahretto olarak 2010’dan beri kahve tutkunlarına hizmet veriyoruz!";
+    var image = Model.HasValue("image") ? Model.Value<IPublishedContent>("image") : null;
+    var imageUrl = image != null ? image.Url() : "/images/placeholder.jpg";
+    var rootNodes = Umbraco.ContentAtRoot();
+    var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "homePage");
+    var contactPage = homePage != null ? homePage.Children().FirstOrDefault(x => x.ContentType.Alias == "contactPage") : null;
+    var aboutPage = homePage != null ? homePage.Children().FirstOrDefault(x => x.ContentType.Alias == "aboutPage") : null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="notranslate">Kahretto - Hakkımızda</title>
+    <link href="https://cdn.jsdelivr.com/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Üst Siyah Bar -->
+    <div class="top-bar">
+        <div class="language-switcher">
+            <a href="@contactPage?.Url()" class="nav-link">İletişim</a>
+            <a href="@aboutPage?.Url()" class="nav-link">Hakkımızda</a>
+            <a href="javascript:void(0)" id="languageToggle">
+                <i class="fas fa-globe"></i>
+            </a>
+            <div id="languageMenu" class="language-menu" style="display: none;">
+                <a href="#" data-lang="tr">Türkçe</a>
+                <a href="#" data-lang="en">English</a>
+                <a href="#" data-lang="de">Deutsch</a>
+                <a href="#" data-lang="fr">Français</a>
+                <a href="#" data-lang="es">Español</a>
+            </div>
+            <div id="google_translate_element" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Hakkımızda İçeriği -->
+    <section class="content-section container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2>Hakkımızda</h2>
+                @Html.Raw(content)
+            </div>
+            <div class="col-12 mt-4">
+                <img src="@imageUrl" class="img-fluid rounded content-image" alt="Hakkımızda resmi">
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.com/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+   
