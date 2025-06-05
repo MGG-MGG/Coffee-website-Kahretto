@@ -28,7 +28,7 @@ The author retains all rights to the original design and code.
 
 The author is not responsible for any misuse or unauthorized copying of this project.
  
-##Important Notice
+## Important Notice
 
 The product names, prices, brand images, and textual content used in this project are for **illustrative purposes only**. This project does not involve any commercial activity, sales, marketing, or representation of any brand. All content has been created solely for design and CMS development purposes.
 
